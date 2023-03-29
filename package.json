@@ -23,7 +23,9 @@
     "solid-js": "^1.6.11",
     "solid-start": "^0.2.21",
     "undici": "5.20.0",
-    "zod": "^3.20.6"
+    "zod": "^3.20.6",
+    "@auth/core": "^0.4.0",
+    "@auth/solid-start": "^0.1.0"
   },
   "engines": {
     "node": ">=16"

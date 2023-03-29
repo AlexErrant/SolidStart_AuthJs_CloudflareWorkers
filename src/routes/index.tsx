@@ -1,6 +1,10 @@
 import styles from "./index.module.css";
-import { type VoidComponent } from "solid-js";
+import { Suspense, type VoidComponent } from "solid-js";
 import { A } from "solid-start";
+import { getSession } from "@auth/solid-start";
+import { authOpts } from "./api/auth/[...solidauth]";
+import { createServerData$ } from "solid-start/server";
+import { signOut, signIn } from "@auth/solid-start/client";
 
 const Home: VoidComponent = () => {
   return (
@@ -32,9 +36,37 @@ const Home: VoidComponent = () => {
             </div>
           </A>
         </div>
+        <Suspense>
+          <AuthShowcase />
+        </Suspense>
       </div>
     </main>
   );
 };
 
 export default Home;
+
+const AuthShowcase: VoidComponent = () => {
+  const sessionData = createSession();
+  return (
+    <div class={styles.authContainer}>
+      <p class={styles.showcaseText}>
+        {sessionData() && <span>Logged in as {sessionData()?.user?.name}</span>}
+      </p>
+      <button
+        class={styles.loginButton}
+        onClick={
+          sessionData() ? () => void signOut() : () => void signIn("discord")
+        }
+      >
+        {sessionData() ? "Sign out" : "Sign in"}
+      </button>
+    </div>
+  );
+};
+
+const createSession = () => {
+  return createServerData$(async (_, event) => {
+    return await getSession(event.request, authOpts);
+  });
+};
