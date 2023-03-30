@@ -5,9 +5,7 @@ import { serverEnv } from "~/env/server";
 export const authOpts: SolidAuthConfig = {
   callbacks: {
     session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-      }
+      console.log("user", user)
       return session;
     },
   },
