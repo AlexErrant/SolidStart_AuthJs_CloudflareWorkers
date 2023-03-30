@@ -67,6 +67,6 @@ const AuthShowcase: VoidComponent = () => {
 
 const createSession = () => {
   return createServerData$(async (_, event) => {
-    return await getSession(event.request, authOpts);
+    return await getSession(event.request, authOpts(event.env));
   });
 };

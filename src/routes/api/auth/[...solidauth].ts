@@ -1,8 +1,12 @@
 import { SolidAuth, type SolidAuthConfig } from "@auth/solid-start";
 import Discord from "@auth/core/providers/discord";
-import { serverEnv } from "~/env/server";
+import type { PageEvent } from "solid-start";
+import type { EnvVars } from "~/env";
 
-export const authOpts: SolidAuthConfig = {
+export function authOpts(env: EnvVars): SolidAuthConfig {
+  return {
+  secret: env.AUTH_SECRET,
+  trustHost: true,
   callbacks: {
     session({ session, user }) {
       console.log("user", user)
@@ -12,11 +16,16 @@ export const authOpts: SolidAuthConfig = {
   providers: [
     // @ts-expect-error Types Issue
     Discord({
-      clientId: serverEnv.DISCORD_ID,
-      clientSecret: serverEnv.DISCORD_SECRET,
+      clientId: env.DISCORD_ID,
+      clientSecret: env.DISCORD_SECRET,
     }),
   ],
   debug: false,
 };
+}
 
-export const { GET, POST } = SolidAuth(authOpts);
+// We could validate that `x.env` is the right shape via Zod... but I don't bother to do that here. Validation would occur on every request... which IMO is overkill.
+
+export const GET = (x: PageEvent) => SolidAuth(authOpts(x.env)).GET(x)
+
+export const POST = (x: PageEvent) => SolidAuth(authOpts(x.env)).POST(x)
